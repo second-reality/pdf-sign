@@ -27,6 +27,10 @@ trap "rm -rf $tmp" EXIT
 
 signature=$tmp/sig.pdf
 stamp=$tmp/stamp.pdf
+blank=$tmp/blank.pdf
+result=$tmp/result.pdf
+
+convert xc:none -page A4 $blank
 
 echo "convert $in_signature to pdf"
 convert $in_signature $signature
@@ -35,5 +39,6 @@ pdfjam --quiet --paper 'a4paper' \
   --scale $scale --offset "${x_offset}cm ${y_offset}cm" \
   --outfile $stamp $in_signature
 echo "stamp file $in_pdf"
-pdftk $in_pdf stamp $stamp output $out_pdf
+pdftk $in_pdf stamp $stamp output $result
+mv $result $out_pdf
 echo "created file $out_pdf"
