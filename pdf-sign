@@ -2,3 +2,38 @@
 
 set -euo pipefail
 
+die()
+{
+  echo "$@" >&2
+  exit 1
+}
+
+[ $# -eq 6 ] || die "usage: $0 in.pdf signature.image x_offset_cm y_offset_cm scale out.pdf"
+
+in_pdf=$1
+shift
+in_signature=$1
+shift
+x_offset=$1
+shift
+y_offset=$1
+shift
+scale=$1
+shift
+out_pdf=$1
+
+tmp=$(mktemp -d)
+trap "rm -rf $tmp" EXIT
+
+signature=$tmp/sig.pdf
+stamp=$tmp/stamp.pdf
+
+echo "convert $in_signature to pdf"
+convert $in_signature $signature
+echo "resize signature"
+pdfjam --quiet --paper 'a4paper' \
+  --scale $scale --offset "${x_offset}cm ${y_offset}cm" \
+  --outfile $stamp $in_signature
+echo "stamp file $in_pdf"
+pdftk $in_pdf stamp $stamp output $out_pdf
+echo "created file $out_pdf"
