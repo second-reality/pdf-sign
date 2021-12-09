@@ -8,7 +8,7 @@ die()
   exit 1
 }
 
-[ $# -eq 7 ] || die "usage: $0 in.pdf signature.image x_offset_cm y_offset_cm scale page out.pdf"
+[ $# -eq 7 ] || die "usage: in.pdf signature.image x_offset_cm y_offset_cm scale page out.pdf"
 
 in_pdf=$1
 shift
